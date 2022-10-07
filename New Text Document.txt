@@ -1,0 +1,93 @@
+PART1: SETUP JENKINS SERVER
+
+STEPS:
+
+1.	Setup a LINUX EC2 instance: Open a Linux EC2 instance on AWS and add ports 22 to SSH on your Linux EC2 instance and 8080 to access Jenkins web UI.
+
+
+2.	Install Java: 
+
+
+•	Run below commands to use Jenkins repository :
+
+
+	sudo wget -O /etc/yum.repos.d/jenkins.repo                       https://pkg.jenkins.io/redhat-stable/jenkins.repo
+
+	sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+
+•	run below command to setup epel release packages:
+	sudo amazon-linux-extras install epel
+
+•	run below command to install java
+	sudo amazon-linux extras install java-openjdk11
+
+
+3.	Install Jenkins:
+	Sudo yum install jenkins -y
+
+4.	Start Jenkins service: 
+	Sudo service jenkins start
+
+5.	Access Jenkins web UI on port 8080:
+
+•	 Access web UI of Jenkins on port 8080 by using instance public id: <instance-public-id>:8080
+•	cat /var/lib/Jenkins/secrets/initialAdminPassword to get Administrator password to unlock Jenkins
+
+PART2: INTEGRATING GIT WITH JENKINS
+
+STEPS:
+1.	Installing Git on Jenkins server: 
+	COMMAND: sudo yum install git -y
+
+2.	Install github plugin on Jenkins GUI:
+	PATH: Jenkins web UI > Dashboard > manage Jenkins > manage Plugins
+
+3.	Configure Git on Jenkins GUI:
+
+	PATH: Jenkins web UI > Dashboard > manage Jenkins > Global Tool Configuration> add git as path to git executable
+
+
+PART3: INTEGRATING MAVEN WITH JENKINS: 
+
+•	Maven is used to build the job and create output/artifacts of it. 
+•	Artifacts are stored in webapp.war file.
+•	PATH of war file: /var/lib/Jenkins/workspace/<job_name>/webapp/target/webapp.war
+
+STEPS:
+1.	Setup Maven on Jenkins server:
+
+	Sudo su – (to login as root user)
+	cd /opt
+	wget https://dlcdn.apache.org/maven/maven-3/3.8.6/binaries/apache-maven-3.8.6-bin.tar.gz (use latest link from maven official page)
+	tar -xvzf apache-maven-3.8.6-bin.tar.gz (to unzip tar.gz file)
+
+	mv apache-maven-3.8.6-bin.tar.gz maven
+
+2.	Setup environment variables: 
+
+	This is done to execute maven command out of bin directory from anywhere
+	Cd /root
+	Vi .bash_profile 
+ 	M2_HOME=/opt/maven/
+  M2=/opt/maven/bin/
+  JAVA_HOME= /usr/lib/jvm/java-11-openjdk-11.0.16.0.8-1.amzn2.0.1.x86_64
+ 	$JAVA_HOME:$M2_HOME:$M2
+	Exit (to exit root user)
+	Sudo su – - -> echo “$path” - - > mvn -v (to check if maven can be executed out of bin directory
+
+3.	Install “Maven Integration plugin” Plugin on Jenkins GUI
+
+	PATH: Jenkins web UI > Dashboard > manage Jenkins > manage Plugins
+
+4.	Configure Maven and Java on Jenkins UI:
+
+	PATH: Jenkins web UI > Dashboard > manage Jenkins > configure system
+	Add JAVA_HOME path and MAVEN_HOME paths
+
+NOTE: While running Jenkins job add “clean install” in Goals and options.
+
+
+
+
+
+
